@@ -1,0 +1,105 @@
+<div class="catalogo-container">
+
+  <div class="header-section">
+    <h2>Colección Exclusiva</h2>
+    <p>Explora nuestras firmas de alta perfumería y sus fragancias asociadas.</p>
+  </div>
+
+  <div class="filters-container">
+    <div class="search-wrapper">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        [value]="textoBusqueda()"
+        (input)="actualizarBusqueda($event)"
+        placeholder="Buscar firma..."
+      >
+      @if (textoBusqueda()) {
+        <button class="btn-clear" (click)="limpiarBusqueda()">✕</button>
+      }
+    </div>
+
+    <div class="sort-wrapper">
+      <select [value]="ordenSeleccionado()" (change)="cambiarOrden($event)" class="premium-select">
+        <option value="AZ">Ordenar: A - Z</option>
+        <option value="ZA">Ordenar: Z - A</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="responsive-grid">
+    @for (marca of marcasFiltradas(); track marca.nombre) {
+      <div class="luxury-card" [class.is-open]="marcaSeleccionada() === marca.nombre">
+
+        <div class="card-top">
+          <div class="brand-badge">{{ marca.nombre.charAt(0).toUpperCase() }}</div>
+          <div class="brand-info">
+            <h3 class="brand-title">{{ marca.nombre }}</h3>
+          </div>
+          <button class="btn-delete-brand" title="Eliminar Marca" (click)="eliminarMarca(marca)">
+            🗑️
+          </button>
+        </div>
+
+        <div class="card-action">
+          <button class="btn-gold" (click)="verDetalle(marca)">
+            {{ marcaSeleccionada() === marca.nombre ? 'Ocultar Colección' : 'Ver Colección' }}
+          </button>
+        </div>
+
+        @if (marcaSeleccionada() === marca.nombre) {
+          <div class="perfume-list-container">
+            @if (perfumesSeleccionados().length > 0) {
+              <div class="perfume-items">
+                @for (perfume of perfumesSeleccionados(); track perfume.nombre) {
+                  <div class="perfume-row">
+                    <span class="p-name">✨ {{ perfume.nombre }}</span>
+
+                    <div class="perfume-right-side">
+                      <span class="p-price">{{ perfume.precio }} €</span>
+                      <div class="perfume-actions">
+                        <button class="btn-action edit" title="Editar" (click)="comenzarEdicion(perfume)">✏️</button>
+                        <button class="btn-action delete" title="Borrar" (click)="eliminarPerfume(perfume)">🗑️</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  @if (perfumeEditando() === perfume._links.self.href) {
+                    <div class="edit-inline-form">
+                      <input type="text" [(ngModel)]="editNombre" placeholder="Nombre del perfume">
+                      <input type="number" [(ngModel)]="editPrecio" placeholder="Precio">
+                      <div class="edit-form-btns">
+                        <button class="btn-save" (click)="guardarCambiosPerfume(perfume, marca)">Confirmar</button>
+                        <button class="btn-cancel" (click)="cancelarEdicion()">Cancelar</button>
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+            } @else {
+              <p class="empty-msg">No hay fragancias registradas en esta firma.</p>
+            }
+          </div>
+        }
+      </div>
+    } @empty {
+      <div class="no-data-card">
+        <p>No se encontraron marcas que coincidan con la búsqueda o el catálogo está vacío.</p>
+      </div>
+    }
+  </div>
+
+  @if (totalPaginas() > 1 && !textoBusqueda()) {
+    <div class="pagination-wrapper">
+      <button class="btn-pager" [disabled]="paginaActual() === 0" (click)="cambiarPagina(paginaActual() - 1)">◀ Anterior</button>
+      <span class="page-info">Página <strong>{{ paginaActual() + 1 }}</strong> de <strong>{{ totalPaginas() }}</strong></span>
+      <button class="btn-pager" [disabled]="paginaActual() === totalPaginas() - 1" (click)="cambiarPagina(paginaActual() + 1)">Siguiente ▶</button>
+    </div>
+  }
+
+  @if (mensajeNotificacion()) {
+    <div class="toast-notification" [class.toast-error]="mensajeNotificacion()?.tipo === 'error'">
+      {{ mensajeNotificacion()?.texto }}
+    </div>
+  }
+</div>

@@ -1,0 +1,39 @@
+<div class="form-container">
+  <div class="form-card">
+    <div class="form-header">
+      <h2>Añadir Registro Completo</h2>
+      <p>Inserta una nueva firma y asóciale su primer perfume en un solo paso.</p>
+    </div>
+
+    <form [formGroup]="perfumeForm" (ngSubmit)="onSubmit()">
+
+      <div class="form-group">
+        <label for="marcaNombre">1. Nombre de la Marca</label>
+        <input id="marcaNombre" type="text" formControlName="marcaNombre" placeholder="Ej: Dior, Chanel, Versace...">
+        @if (perfumeForm.get('marcaNombre')?.invalid && perfumeForm.get('marcaNombre')?.touched) {
+          <span class="error-msg">Este campo es obligatorio.</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="perfumeNombre">2. Nombre del Perfume</label>
+        <input id="perfumeNombre" type="text" formControlName="perfumeNombre" placeholder="Ej: Sauvage, Bleue, Intense...">
+        @if (perfumeForm.get('perfumeNombre')?.invalid && perfumeForm.get('perfumeNombre')?.touched) {
+          <span class="error-msg">Este campo es obligatorio.</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="precio">3. Precio de Venta (€)</label>
+        <input id="precio" type="number" formControlName="precio">
+        @if (perfumeForm.get('precio')?.invalid && perfumeForm.get('precio')?.touched) {
+          <span class="error-msg">El precio debe ser un valor válido y mayor que 0.</span>
+        }
+      </div>
+
+      <button type="submit" [disabled]="perfumeForm.invalid" class="btn-submit">
+        🚀 Guardar en Base de Datos
+      </button>
+    </form>
+  </div>
+</div>
